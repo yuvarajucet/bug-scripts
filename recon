@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+findomain-linux -o -t $1 ; cat $1.txt | naabu -silent | httpx -silent | nuclei -silent -t ~/nuclei-templates | notify 
+
