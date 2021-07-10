@@ -1,0 +1,40 @@
+#!/usr/bin/python3
+import sys,os
+import subprocess as sub
+
+# Read file from user
+if(sys.argv[1]):
+          arr = []
+          newlist = []
+          print("File name : ",sys.argv[1])
+          list = open(sys.argv[1],"r")
+          
+          temp = open("tt.txt","w")
+          #content = list.readlines()
+          
+          #         print("thi")
+          # Protocol removing 
+          for url in list:
+                    if not url.isspace():
+                              url = url.rstrip()
+                              url = url.replace("http://","")
+                              url = url.replace("https://","")
+                              url = url.replace("www.","")
+                              url = url.replace("https://www/","")
+                              url = "localhost.{}".format(url)
+                              temp.write("{}\n".format(url))
+          #print("here")
+          temp.close()
+
+          f  = open("tt.txt","r")
+          links = f.readlines()
+
+          for line in links:
+                    site = line.strip()
+                    cmd = "host "+(site)+" | cut -d ' ' -f 4"
+                    val = sub.check_output(["host",site])
+                    if val != b'':
+                              print(" \033[1;32;40m [+] Site is Vulnerble :\033[1;32;0m " +site)
+
+else:
+          print("Plese enter file name [ python3 sss.py (file name) ]")

@@ -1,0 +1,72 @@
+#!/usr/bin/python3
+
+import requests
+import os,sys
+
+def check(site):
+          try:
+                    param = {'domain':site,'serial':'fred12'}
+                    r = requests.post('https://www.kitterman.com/spf/getspf3.py',data=param)
+                    val = r.text
+                    os.system("echo '"+(val)+"' > ~/.test.txt")
+                    print("\033[32m")
+                    print("-"*100)
+                    print("Current site :",site)
+                    print("-"*100)
+                    print("\033[0m")
+                    os.system("grep --silent -I 'No valid SPF record found' ~/.test.txt && echo '\033[32m[+] \033[0m"+(site)+" No valid SPF Record\033[32m   [Vulnerable]' || echo '\033[31m[-]\033[0m "+(site)+" Valid SPF Record'\033[31m   [Not vulnerable]")
+                    os.system("grep --silent -I '~all' ~/.test.txt && echo '\033[32m[+]\033[0m "+(site)+" Support Custom Mail \033[32m  [Vulnerable] ' || echo '\033[31m[-]\033[0m "+(site)+" Does not support custom Mail\033[31m     [Not Vulnerable]'")
+                    os.system("rm -rf ~/.test.txt")
+                    print("\033[32m")
+                    print("*"*100)
+          except KeyboardInterrupt:
+                    print("\n\033[31m[-] \033[0m You pressed [CTRL + C]")
+                    os.system("rm -rf .tt.txt")
+                    exit(1)
+          except :
+                    print("\033[31m[-]\033[0m Kindly Enter website Name [Ex : spffinder <filename>]")
+
+if __name__ == '__main__':
+          if (sys.argv[0] == 0):
+                    print("\033[31m")
+                    print("-"*50)
+                    print("\t\tHelp")
+                    print("-"*50)
+                    print("[+] Multiple domains  [ python3 spffinder.py -f filename.txt ]")
+                    print("[+] Single domain [ python3 spffinder.py -s domain.txt ]")
+                    print("\033[0m")
+
+          elif(sys.argv[1] == "-f"):
+                    if(sys.argv[2]):
+                              arr = []
+                              newlist = []
+                              print("File Location: ",sys.argv[2])
+                              list = open(sys.argv[2],'r')
+                              temp = open(".tt.txt",'w')
+                              for url in list:
+                                        if not url.isspace():
+                                                  url = url.rstrip()
+                                                  url = url.replace("http://","")
+                                                  url = url.replace("https://","")
+                                                  url = url.replace("www.","")
+                                                  url = url.replace("https://www.","")
+                                                  url = url.replace("http://www.","")
+                                                  temp.write("{}\n".format(url))
+                              temp.close()
+                              f = open(".tt.txt","r")
+                              links = f.readlines()
+                              for line in links:
+                                        site = line.strip()
+                                        check(site)
+                              os.system("rm -rf .tt.txt")
+          elif(sys.argv[1] == "-s"):
+                    if(sys.argv[2]):
+                              check(sys.argv[2])
+          else:
+                    print("\033[31m")
+                    print("-"*50)
+                    print("\t\tHelp")
+                    print("-"*50)
+                    print("[+] Multiple domains  [ python3 spffinder.py -f filename.txt ]")
+                    print("[+] Single domain [ python3 spffinder.py -s domain.txt ]")
+                    print("\033[0m")
